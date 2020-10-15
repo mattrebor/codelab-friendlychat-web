@@ -88,11 +88,22 @@ function saveImageMessage(file) {
     profilePicUrl: getProfilePicUrl(),
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   }).then(function(messageRef) {
+    const trace = firebase.performance().trace('saveImageMessage');
+
+    trace.putMetric('imageSize', file.size);
+
+    trace.putAttribute('imageType', file.type);
+    
+    trace.start();
+
     // 2 - Upload the image to Cloud Storage
     var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
     return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
       // 3 - Generate a public URL for the file
       return fileSnapshot.ref.getDownloadURL().then(url => {
+
+        trace.stop();
+
         // 4 - Update the chat message placeholder with the image's URL
         return messageRef.update({
           imageUrl: url,
@@ -300,7 +311,7 @@ function displayMessage(id, timestamp, name, text, picUrl, imageUrl) {
     div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
   }
 
-  var dt = new Date(timestamp.toMillis());
+  const dt = new Date(timestamp.toMillis());
 
   div.querySelector('.name').textContent = name  + ' - ' + dt.toLocaleString();
   var messageElement = div.querySelector('.message');
