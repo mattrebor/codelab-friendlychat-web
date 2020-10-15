@@ -6,3 +6,4 @@ importScripts('/__/firebase/7.22.1/firebase-messaging.js');
 importScripts('/__/firebase/init.js');
 
 firebase.messaging();
+
