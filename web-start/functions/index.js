@@ -61,7 +61,7 @@ exports.blueOffensiveImages = functions.runWith({memory: '2GB'}).storage.object(
         const [result] = await client.annotateImage(req);
         const safeSearchResult = result.safeSearchAnnotation;
         //const Likelihood = vision.Likelihood;
-        if (safeSearchResult.violence == 'LIKELY' || safeSearchResult.violence == 'VERY_LIKELY') {
+        if (safeSearchResult.violence === 'LIKELY' || safeSearchResult.violence === 'VERY_LIKELY') {
             
             console.log('The image ', object.name, ' has been detected as inappropriate.');
             return blurImage(object.name);
